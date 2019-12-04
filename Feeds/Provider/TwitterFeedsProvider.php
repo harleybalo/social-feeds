@@ -62,16 +62,6 @@ class TwitterFeedsProvider extends AbstractFeedsProvider
     }
 
 
-    /**
-     * Get postfields array (simple getter)
-     *
-     * @return array $this->postfields
-     */
-    public function getPostfields()
-    {
-        return $this->postfields;
-    }
-
 
     /**
      * Since the OAuth data is passed in a url, special characters need to be encoded
@@ -121,32 +111,6 @@ class TwitterFeedsProvider extends AbstractFeedsProvider
 
 
     /**
-     * Set post params string
-     *
-     * @param array $array Get key and value pairs
-     *
-     * @return void 
-     * @throws \Exception
-     */
-    public function setPostfields(array $params, $url = null)
-    {
-        if (!is_null($this->getGetfield())) {
-            throw new \Exception('Only one request type is allowed');
-        }
-
-        if (!empty($params['status']) && substr($params['status'], 0, 1) === '@') {
-            $params['status'] = sprintf("\0%s", $params['status']);
-        }
-        foreach ($params as  &$value) {
-            if (is_bool($value)) {
-                $value = ($value === true) ? 'true' : 'false';
-            }
-        }
-
-        $this->postParams = $params;
-    }
-
-    /**
      * Build the Oauth object using params set in construct and additionals
      *
      * @param string $url          
@@ -175,55 +139,6 @@ class TwitterFeedsProvider extends AbstractFeedsProvider
         return $oauth;
     }
 
-
-
-
-    /**
-     * Set get params string
-     *
-     * @param string $str Get key and value pairs
-     *    
-     * @return void 
-     * @throws \Exception
-     */
-    public function setGetParams($str)
-    {
-        if (!empty($this->getPostParams())) {
-            throw new \Exception('Only one request type is allowed');
-        }
-
-        $getParams  = preg_replace('/^\?/', '', explode('&', $str));
-        $params     = [];
-
-        foreach ($getParams as $field) {
-            if ($field !== '') {
-                list($key, $value) = explode('=', $field);
-                $params[$key] = $value;
-            }
-        }
-
-        $this->getParams = '?' . http_build_query($params, '', '&');
-    }
-
-    /**
-     * Returns get parameters array 
-     *
-     * @return array $this->getParams
-     */
-    public function getGetParams(): array
-    {
-        return $this->getParams;
-    }
-
-    /**
-     * Returns post parameters array 
-     *
-     * @return array $this->postParams
-     */
-    public function getPostParams(): array
-    {
-        return $this->postParams;
-    }
 
     /**
      * Set providers params
@@ -265,38 +180,6 @@ class TwitterFeedsProvider extends AbstractFeedsProvider
         }
 
         return $method . "&" . rawurlencode($uri) . '&' . rawurlencode(implode('&', $return));
-    }
-
-
-    /**
-     * Generate authorization header for CURL Request
-     *
-     * @param array $oauth
-     *
-     * @return string $return Header used by cURL for request
-     */
-    private function generateAuthHeader(array $oauth)
-    {
-        $return = 'Authorization: OAuth ';
-        $values = [];
-        $allowedKeys = [
-            'oauth_consumer_key',
-            'oauth_nonce',
-            'oauth_signature',
-            'oauth_signature_method',
-            'oauth_timestamp',
-            'oauth_token',
-            'oauth_version',
-        ];
-
-        foreach ($oauth as $key => $value) {
-            if (in_array($key, $allowedKeys)) {
-                $values[] = "$key=\"" . rawurlencode($value) . "\"";
-            }
-        }
-        $return .= implode(', ', $values);
-
-        return $return;
     }
 
 
