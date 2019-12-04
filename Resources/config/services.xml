@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="harleybalo_social.options_resolver.class">Harleybalo\SocialBundle\Options\Resolver</parameter>
+        <parameter key="harleybalo_social.options_provider.config.class">Harleybalo\SocialBundle\Options\ConfigProvider</parameter>
+    </parameters>
+
+    <services>
+        <service id="harleybalo_social.options_resolver" class="%harleybalo_social.options_resolver.class%" public="false" />
+        <service id="harleybalo_social.options_provider.config" class="%harleybalo_social.options_provider.config.class%">
+            <argument>%harleybalo_social.twitter%</argument>
+            <tag name="harleybalo_social.options_provider" priority="-1" />
+        </service>
+    </services>
+</container>
